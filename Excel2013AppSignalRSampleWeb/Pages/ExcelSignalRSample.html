@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <title>ExcelSignalRSample</title>
 
-    <link rel="stylesheet" type="text/css" href="../Content/Office.css" />
-
+    <!--<link rel="stylesheet" type="text/css" href="../Content/Office.css" />-->
+    
     <!-- Add your CSS styles to the following file -->
-    <link rel="stylesheet" type="text/css" href="../Content/App.css" />
+    <!--<link rel="stylesheet" type="text/css" href="../Content/App.css" />-->
+    <link rel="stylesheet" type="text/css" href="../Content/bootstrap.css"/>
 
     <script src="../Scripts/jquery-1.8.3.js"></script>
     <script src="../Scripts/jquery.signalR-1.0.0-rc2.js"></script>
+    <script src="../Scripts/bootstrap.js"></script>
     <script src="../signalr/hubs"></script>
-    <!--<script src="../Scripts/jquery-1.7.1.js"></script>-->
 
     <!-- Use the CDN reference to Office.js when deploying your app -->
     <!--<script src="https://appsforoffice.microsoft.com/lib/1.0/hosted/office.js"></script>-->
@@ -27,17 +28,18 @@
 </head>
 <body>
     <!-- Replace the following with your content -->
-    <div id="Content">
-        <div id="MarketControls">
-            <input type="button" value="Open Market" id="open" style="margin-right: 10px; padding: 0px; width: 100px;" />
-            <input type="button" value="Close Market" id="close" style="padding: 0px; width: 100px;" />
-            <input type="button" value="Reset Market" id="reset" style="padding: 0px; width: 100px;" />
-        </div>
-        <div id="BindingControls">
-            <input type="button" value="Set Binding" id="setBinding" style="padding: 0px; width: 100px;"/>
-            <input type="button" value="Clear Binding" id="clearBinding" style="padding: 0px; width: 100px;"/>
-        </div>
+    <div class="row-fluid">
+        <h3>Market controls</h3>
+        <button class="btn btn-primary" id="open">Open Market</button>
+        <button class="btn btn-primary" id="close">Close Market</button>
+        <button class="btn btn-primary" id="reset">Reset Market</button>
     </div>
-    <div id="Messages"></div>
+    <div class="row-fluid">
+        <h3>Binding controls</h3>
+        <button class="btn btn-primary" id="setBinding">Set Binding</button>
+        <button class="btn btn-primary" id="clearBinding">Clear Binding</button>
+        <p>For a successful binding, you must bind to a table with one or more of the following column headings: <span id="stockProperties"/></p>
+    </div>
+    <div id="messages" class="row-fluid"></div>
 </body>
 </html>

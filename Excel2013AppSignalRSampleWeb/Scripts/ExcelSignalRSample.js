@@ -3,11 +3,17 @@
 Office.initialize = function (reason) {
     $(document).ready(function () {
 
-        var stockProperties = ["Symbol", "Price", "DayHigh", "DayLow", "DayOpen", "Change", "LastChange", "PercentChange"];
-        var tableBinding;
+        var stockProperties = ['Symbol', 'Price', 'DayHigh', 'DayLow', 'DayOpen', 'Change', 'LastChange', 'PercentChange'];
         var stockRowMap = {};
+        var tableBinding;
 
-        $("#setBinding").click(function () {
+        $('#stockProperties').append(stockProperties.join(', '));
+
+        $('#clearBinding').prop('disabled', true);
+
+        $('#setBinding').click(function () {
+
+            $('.alert-binding').alert('close');
             
             Office.context.document.bindings.addFromPromptAsync(Office.BindingType.Table,
                 // It would be nice if restrictions on the Binding parameters could be optionally specified here,
@@ -15,9 +21,12 @@ Office.initialize = function (reason) {
                 // expected headers of a table's columns. As it is, we will check that here...
                 { id: 'StockTable', promptText: 'Select a table to bind to.' },
                 function (asyncResult) {
-                    if (asyncResult.status == Office.AsyncResultStatus.Failed) {
-                        $("#Messages").prepend("<p>An error occurred attempting to set the TableBinding: " +
-                            asyncResult.error.message + "</p>");
+                    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+                        $('"#messages').prepend(
+                            '<div class="alert alert-error alert-binding">' +
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                'An error occurred attempting to set the TableBinding: ' + asyncResult.error.message +
+                            '</div>');
                         return;
                     }
 
@@ -26,9 +35,13 @@ Office.initialize = function (reason) {
                     // In Excel 2013, it seems you can't create a table without headers, so a call to binding.hasHeaders
                     // isn't necessary, we can just get the headers async.
                     tableBinding.getDataAsync({ rowCount: 0 }, function (asyncResult) {
-                        if (asyncResult.status == Office.AsyncResultStatus.Failed) {
-                            $("#Messages").prepend("<p>An error occurred attempting to get the table headers: " +
-                                asyncResult.error.message + "</p>");
+                        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+                            $('#messages').prepend(
+                                '<div class="alert alert-error alert-binding">' +
+                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                    'An error occurred attempting to get the table headers: ' + asyncResult.error.message +
+                                '</div>');
+                            Office.context.document.bindings.releaseByIdAsync('StockTable');
                             return;
                         }
 
@@ -40,9 +53,13 @@ Office.initialize = function (reason) {
                         });
                         
                         // and if so... create an error message and release the binding.
-                        if (unrecognisedHeaders.length != 0) {
-                            $("#Messages").append("<p>There are unrecognised column headers; please remove and create the binding again: " +
-                                unrecognisedHeaders.join(",") + "</p>");
+                        if (unrecognisedHeaders.length !== 0) {
+                            $('#messages').prepend(
+                                '<div class="alert alert-error alert-binding">' +
+                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                    'There are unrecognised column headers; please remove and create the binding again: ' +
+                                    unrecognisedHeaders.join(',') +
+                                '</div>');
 
                             // Releasing the binding could fail... but not checking that at the moment.
                             Office.context.document.bindings.releaseByIdAsync('StockTable');
@@ -60,12 +77,33 @@ Office.initialize = function (reason) {
                             return stockArray;
                         };
                         initializeTable(tableBinding);
+
+                        $('#messages').prepend(
+                            '<div class="alert alert-success alert-binding">' +
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                'Binding successful.' +
+                            '</div>'
+                        );
+
+                        $('#setBinding').prop('disabled', true);
+                        $('#clearBinding').prop('disabled', false);
                     });
                 });
         });
 
-        $("#clearBinding").click(function() {
-
+        $('#clearBinding').click(function () {
+            $('#setBinding').prop('disabled', false);
+            $('#clearBinding').prop('disabled', true);
+            Office.context.document.bindings.releaseByIdAsync('StockTable', function (asyncResult) {
+                if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+                    $('#messages').prepend(
+                        '<div class="alert alert-error alert-binding">' +
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                            'An error occurred attempting to clear the binding: ' + asyncResult.error.message +
+                        '</div>'
+                    );
+                }
+            });
         });
         
         function initializeTable(binding) {
@@ -76,7 +114,7 @@ Office.initialize = function (reason) {
                 stocks = stocks.map(mapStockToArray);
 
                 binding.addRowsAsync(stocks, function(asyncResult) {
-                    if (asyncResult.status == Office.AsyncResultStatus.Succeeded) {
+                    if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
 
                     }
                 });
@@ -86,12 +124,12 @@ Office.initialize = function (reason) {
         var ticker = $.connection.stockTicker;
 
         function mapStockToArray() {
-            $('#Messages').append("<p>mapStockToArray function has not yet been defined.</p>");
+            $('#messages').append('<p>mapStockToArray function has not yet been defined.</p>');
         }
 
         $.extend(ticker.client, {
             updateStockPrice: function (stock) {
-                if (tableBinding == null) {
+                if (tableBinding === null) {
                     return;
                 }
                 var arr = [mapStockToArray(stock)];
@@ -103,15 +141,15 @@ Office.initialize = function (reason) {
             },
 
             marketOpened: function() {
-                $("#open").prop("disabled", true);
-                $("#close").prop("disabled", false);
-                $("#reset").prop("disabled", true);
+                $('#open').prop('disabled', true);
+                $('#close').prop('disabled', false);
+                $('#reset').prop('disabled', true);
             },
 
             marketClosed: function() {
-                $("#open").prop("disabled", false);
-                $("#close").prop("disabled", true);
-                $("#reset").prop("disabled", false);
+                $('#open').prop('disabled', false);
+                $('#close').prop('disabled', true);
+                $('#reset').prop('disabled', false);
             },
 
             marketReset: function() {
@@ -133,15 +171,15 @@ Office.initialize = function (reason) {
                 }
 
                 // Wire up the buttons
-                $("#open").click(function () {
+                $('#open').click(function () {
                     ticker.server.openMarket();
                 });
 
-                $("#close").click(function () {
+                $('#close').click(function () {
                     ticker.server.closeMarket();
                 });
 
-                $("#reset").click(function () {
+                $('#reset').click(function () {
                     ticker.server.reset();
                 });
             });
