@@ -15,10 +15,10 @@ Office.initialize = function (reason) {
 
             $('.alert-binding').alert('close');
             
+            // It would be nice if restrictions on the Binding parameters could be optionally specified here,
+            // such as the 'shape' of a TableBinding/MatrixBinding (i.e. min/max number of rows/columns), or the
+            // expected headers of a table's columns. As it is, we will check that here...
             Office.context.document.bindings.addFromPromptAsync(Office.BindingType.Table,
-                // It would be nice if restrictions on the Binding parameters could be optionally specified here,
-                // such as the 'shape' of a TableBinding/MatrixBinding (i.e. min/max number of rows/columns), or the
-                // expected headers of a table's columns. As it is, we will check that here...
                 { id: 'StockTable', promptText: 'Select a table to bind to.' },
                 function (asyncResult) {
                     if (asyncResult.status === Office.AsyncResultStatus.Failed) {
