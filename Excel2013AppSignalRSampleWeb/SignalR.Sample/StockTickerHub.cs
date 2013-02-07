@@ -38,6 +38,11 @@ namespace Microsoft.AspNet.SignalR.StockTicker
             _stockTicker.CloseMarket();
         }
 
+        public void ChangeUpdateInterval(int updateInterval)
+        {
+            _stockTicker.ChangeUpdateInterval(updateInterval);
+        }
+
         public void Reset()
         {
             _stockTicker.Reset();

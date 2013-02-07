@@ -1,4 +1,5 @@
-﻿/// <reference path="jquery-1.8.3.js" />
+﻿/// <reference path="jquery-ui-1.10.0.js" />
+/// <reference path="jquery-1.8.3.js" />
 /* Required to correctly initalize Office.js for intellisense */
 /// <reference path="_officeintellisense.js" />
 /* Use offline copy of Office.js for intellisense */

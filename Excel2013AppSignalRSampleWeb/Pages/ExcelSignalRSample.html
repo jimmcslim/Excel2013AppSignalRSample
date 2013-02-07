@@ -10,8 +10,9 @@
     <!-- Add your CSS styles to the following file -->
     <!--<link rel="stylesheet" type="text/css" href="../Content/App.css" />-->
     <link rel="stylesheet" type="text/css" href="../Content/bootstrap.css"/>
-
+    <link rel="stylesheet" type="text/css" href="../Content/themes/ui-lightness/jquery-ui.css"/>
     <script src="../Scripts/jquery-1.8.3.js"></script>
+    <script src="../Scripts/jquery-ui-1.10.0.js"></script>
     <script src="../Scripts/jquery.signalR-1.0.0-rc2.js"></script>
     <script src="../Scripts/bootstrap.js"></script>
     <script src="../signalr/hubs"></script>
@@ -40,6 +41,8 @@
         <button class="btn btn-primary" id="clearBinding">Clear Binding</button>
         <p>For a successful binding, you must bind to a table with one or more of the following column headings: <span id="stockProperties"/></p>
     </div>
+    <div class="row-fluid">Update frequency: <span id="updateFrequency">250</span> ms.
+        <div id="updateSlider"></div></div>
     <div id="messages" class="row-fluid"></div>
 </body>
 </html>

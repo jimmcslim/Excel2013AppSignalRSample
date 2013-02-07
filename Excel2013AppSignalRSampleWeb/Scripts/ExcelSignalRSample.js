@@ -1,11 +1,18 @@
-﻿// This function is run when the app is ready to start interacting with the host application
+﻿///<reference path="/Scripts/jquery-ui-1.10.0.js"/>
+// This function is run when the app is ready to start interacting with the host application
 // It ensures the DOM is ready before adding click handlers to buttons
 Office.initialize = function (reason) {
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         var stockProperties = ['Symbol', 'Price', 'DayHigh', 'DayLow', 'DayOpen', 'Change', 'LastChange', 'PercentChange'];
         var stockRowMap = {};
         var tableBinding;
+
+        $('#updateSlider').slider({
+            min: 100,
+            max: 1000,
+            value: 250
+        });
 
         $('#stockProperties').append(stockProperties.join(', '));
 
@@ -183,5 +190,12 @@ Office.initialize = function (reason) {
                     ticker.server.reset();
                 });
             });
+        
+        $("#updateSlider").on("slidechange", function (event, ui) {
+            ticker.server.changeUpdateInterval(ui.value);
+        });
+        $("#updateSlider").on("slide", function(event, ui) {
+            $("#updateFrequency").html(ui.value);
+        });
     });
 };

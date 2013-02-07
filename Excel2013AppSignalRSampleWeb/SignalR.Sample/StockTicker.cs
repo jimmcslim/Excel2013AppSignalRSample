@@ -180,6 +180,11 @@ namespace Microsoft.AspNet.SignalR.StockTicker
         {
             Clients.All.updateStockPrice(stock);
         }
+
+        public void ChangeUpdateInterval(int updateInterval)
+        {
+            _timer.Change(updateInterval, updateInterval);
+        }
     }
 
     public enum MarketState
