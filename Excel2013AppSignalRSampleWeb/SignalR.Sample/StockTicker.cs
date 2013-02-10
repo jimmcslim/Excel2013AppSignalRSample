@@ -8,15 +8,17 @@ namespace Microsoft.AspNet.SignalR.StockTicker
 {
     public class StockTicker
     {
+        private const int InitialUpdateInterval = 250; //ms
+
         private readonly static Lazy<StockTicker> _instance = new Lazy<StockTicker>(() => new StockTicker());
         private readonly static object _marketStateLock = new object();
         private readonly ConcurrentDictionary<string, Stock> _stocks = new ConcurrentDictionary<string, Stock>();
         private readonly double _rangePercent = .002; //stock can go up or down by a percentage of this factor on each change
-        private readonly int _updateInterval = 250; //ms
         // This is used as an singleton instance so we'll never both disposing the timer
         private Timer _timer;
         private readonly object _updateStockPricesLock = new object();
         private bool _updatingStockPrices = false;
+        private double _updateProbability = .1;
         private readonly Random _updateOrNotRandom = new Random();
         private MarketState _marketState = MarketState.Closed;
         private readonly Lazy<IHubConnectionContext> _clientsInstance = new Lazy<IHubConnectionContext>(() => GlobalHost.ConnectionManager.GetHubContext<StockTickerHub>().Clients);
@@ -59,7 +61,7 @@ namespace Microsoft.AspNet.SignalR.StockTicker
                     if (MarketState != MarketState.Open || MarketState != MarketState.Opening)
                     {
                         MarketState = MarketState.Opening;
-                        _timer = new Timer(UpdateStockPrices, null, _updateInterval, _updateInterval);
+                        _timer = new Timer(UpdateStockPrices, null, InitialUpdateInterval, InitialUpdateInterval);
                         MarketState = MarketState.Open;
                         BroadcastMarketStateChange(MarketState.Open);
                     }
@@ -142,7 +144,7 @@ namespace Microsoft.AspNet.SignalR.StockTicker
         {
             // Randomly choose whether to udpate this stock or not
             var r = _updateOrNotRandom.NextDouble();
-            if (r > .1)
+            if (r > _updateProbability)
             {
                 return false;
             }
@@ -184,6 +186,11 @@ namespace Microsoft.AspNet.SignalR.StockTicker
         public void ChangeUpdateInterval(int updateInterval)
         {
             _timer.Change(updateInterval, updateInterval);
+        }
+
+        public void ChangeUpdateProbability(double updateProbability)
+        {
+            _updateProbability = updateProbability;
         }
     }
 

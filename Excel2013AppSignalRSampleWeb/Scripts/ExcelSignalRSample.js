@@ -8,10 +8,17 @@ Office.initialize = function (reason) {
         var stockRowMap = {};
         var tableBinding;
 
-        $('#updateSlider').slider({
+        $('#updateFrequencySlider').slider({
             min: 100,
             max: 1000,
             value: 250
+        });
+
+        $('#updateProbabilitySlider').slider({
+            min: 0.1,
+            max: 0.9,
+            value: 0.1,
+            step: 0.01
         });
 
         $('#stockProperties').append(stockProperties.join(', '));
@@ -191,11 +198,20 @@ Office.initialize = function (reason) {
                 });
             });
         
-        $("#updateSlider").on("slidechange", function (event, ui) {
+        $("#updateFrequencySlider").on("slidechange", function (event, ui) {
             ticker.server.changeUpdateInterval(ui.value);
         });
-        $("#updateSlider").on("slide", function(event, ui) {
+
+        $("#updateFrequencySlider").on("slide", function (event, ui) {
             $("#updateFrequency").html(ui.value);
+        });
+
+        $("#updateProbabilitySlider").on("slidechange", function(event, ui) {
+            ticker.server.changeUpdateProbability(ui.value);
+        });
+
+        $("#updateProbabilitySlider").on("slide", function(event, ui) {
+            $("#updateProbability").html(ui.value * 100);
         });
     });
 };

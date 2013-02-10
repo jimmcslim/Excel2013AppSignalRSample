@@ -43,6 +43,11 @@ namespace Microsoft.AspNet.SignalR.StockTicker
             _stockTicker.ChangeUpdateInterval(updateInterval);
         }
 
+        public void ChangeUpdateProbability(double updateProbability)
+        {
+            _stockTicker.ChangeUpdateProbability(updateProbability);
+        }
+
         public void Reset()
         {
             _stockTicker.Reset();
